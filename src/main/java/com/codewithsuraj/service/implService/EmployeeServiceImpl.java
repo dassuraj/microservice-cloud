@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 
@@ -20,28 +21,61 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
     @Autowired
     private ModelMapper modelMapper;
-//    @Autowired
+    @Autowired
+    private WebClient webClient;
+    /**
+    //@Autowired
     private RestTemplate restTemplate;
-//
-//    @Value("${addressService.base.url}")
-//    private String addressBaseURL;
+    */
 
-    public EmployeeServiceImpl(@Value("${addressService.base.url}")String addressBaseURL,
-                           RestTemplateBuilder builder){
-        this.restTemplate=builder.rootUri(addressBaseURL).build();
+    /**
+     * //    @Value("${addressService.base.url}")
+     * //    private String addressBaseURL;
+     */
+
+    /**
+     * this constructor is used to  configure the restTemplate if it is not define inside the config file as bean
+    public EmployeeServiceImpl(@Value("${addressService.base.url}") String addressBaseURL,
+                               RestTemplateBuilder builder) {
+        this.restTemplate = builder.rootUri(addressBaseURL).build();
     }
+     **/
 
     @Override
     public List<Employee> getAllEmployee() {
         return employeeRepository.findAll();
     }
 
+    /**
+     * here we are using the rest template(first) as well as web client learning letter
+     * @param id
+     * @return
+     */
     @Override
     public EmployeeResponse getEmpById(int id) {
-        Employee employee = employeeRepository.findById(id).get();
+        Employee employee = employeeRepository.findById(id).get();//db call
         AddressResponse addressResponse = new AddressResponse();
         EmployeeResponse employeeResponse = modelMapper.map(employee, EmployeeResponse.class);
-        addressResponse = restTemplate.getForObject("/address/{id}", AddressResponse.class, id);
+        /**
+         * instead of using restTemplate now we are going to use webclient that will not block the new line or new request
+         */
+        //addressResponse = restTemplate.getForObject("/address/{id}", AddressResponse.class, id);//external restapi call
+        /**
+         * point to be noted
+         * RestTemplate is blocking in nature and id doesn't let other line to execute until it get response i.e, it(thread)
+         * doesn't accept another request
+         */
+
+
+        /**
+         * configuring webclient in config file  for using it i.e, bean configuration for web client
+         */
+        addressResponse =webClient.get()
+                .uri("/address/"+id)
+                .retrieve()
+                .bodyToMono(AddressResponse.class)
+                .block();
+
         employeeResponse.setAddressResponse(addressResponse);
         return employeeResponse;
     }
