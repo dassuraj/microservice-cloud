@@ -78,6 +78,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         employeeResponse.setAddressResponse(addressResponse);
         return employeeResponse;
+
+        /**
+         * instead of direct https use we can add url in .properties file
+         *
+         * //    @GetMapping(value = "/employee")
+         * //    public String getEmployee() {
+         * //        String address = restTemplate.getForObject("http://localhost:8081/address", String.class);
+         * //        return "Name:->Suraj::gmail:->suraj@gmail.com::address->" + address;
+         * //    }
+         */
     }
 
     @Override

@@ -7,16 +7,22 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
+/**
+ *This is the config class for configuring bean for employee
+ */
 @Configuration
 public class EmployeeAppConfig {
-    //    @Bean
-//    public RestTemplate restTemplate() {
-//
-//        return new RestTemplate();
-//    }
+    /**
+     * this is the url configuration
+     */
+
     @Value("${addressService.base.url}")
     private String addressBaseURL;
 
+    /**
+     * this is model mapper bean configuration
+     * @return
+     */
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
@@ -29,12 +35,13 @@ public class EmployeeAppConfig {
                 baseUrl(addressBaseURL).
                 build();
     }
-//     @Autowired
-//     private RestTemplate restTemplate;
-//
-//    @GetMapping(value = "/employee")
-//    public String getEmployee() {
-//        String address = restTemplate.getForObject("http://localhost:8081/address", String.class);
-//        return "Name:->Suraj::gmail:->suraj@gmail.com::address->" + address;
-//    }
+
+    /**
+     * this is the restTemplate bean configuration
+     *   @Bean
+     *     public RestTemplate restTemplate() {
+     *
+     *         return new RestTemplate();
+     *     }
+     */
 }
